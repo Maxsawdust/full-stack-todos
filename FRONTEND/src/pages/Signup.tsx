@@ -7,8 +7,12 @@ import {
 } from "../components";
 import { signupSchema } from "../utils/validationSchema";
 import { useNavigate } from "react-router";
+import { useState } from "react";
+import UserSignUp from "../interfaces/userSignUp";
 
 export default function Signup() {
+  const [signUpError, setSignUpError] = useState("");
+
   const navigate = useNavigate();
 
   const formik = useFormik({
@@ -19,10 +23,49 @@ export default function Signup() {
       confirmPassword: "",
     },
 
-    onSubmit: () => {
-      // register new user
-      // navigate to login
-      navigate("/login");
+    onSubmit: async () => {
+      try {
+        // get users from DB
+        const allUsers = await (
+          await fetch("http://localhost:5000/users")
+        ).json();
+
+        const username = formik.values.username;
+        const email = formik.values.email.toLowerCase();
+
+        // displaying err message if username taken
+        if (allUsers.find((user: UserSignUp) => user.username === username)) {
+          formik.errors.username = "Oops, that username is already taken!";
+          return;
+        }
+        // displaying err message if email taken
+        if (allUsers.find((user: UserSignUp) => user.email === email)) {
+          formik.errors.email =
+            "Wait a minute, looks like that email is taken!";
+          return;
+        }
+
+        // if there is no existing user with these details, add the user to DB
+        const response = await fetch("http://localhost:5000/users/signup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formik.values),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to sign up.");
+        }
+
+        // clear error text
+        setSignUpError("");
+        // navigate to login
+        navigate("/login");
+      } catch (err: any) {
+        setSignUpError("Sorry, something's wrong on our end!");
+        console.error(err);
+      }
     },
 
     validateOnBlur: false,
@@ -41,16 +84,24 @@ export default function Signup() {
 
         <div className="h-[2px] bg-gray-400" />
 
-        <form className="flex flex-col gap-4" onSubmit={formik.handleSubmit}>
+        <form
+          className="flex flex-col gap-4 relative"
+          onSubmit={formik.handleSubmit}>
           <FormInput
             errorMessage={formik.errors.username}
-            onChange={formik.handleChange}
+            onChange={(e) => {
+              formik.handleChange(e);
+              formik.setFieldError("username", "");
+            }}
             name="username">
             Username
           </FormInput>
           <FormInput
             errorMessage={formik.errors.email}
-            onChange={formik.handleChange}
+            onChange={(e) => {
+              formik.handleChange(e);
+              formik.setFieldError("email", "");
+            }}
             name="email">
             Email
           </FormInput>
@@ -66,6 +117,13 @@ export default function Signup() {
             name="confirmPassword">
             Confirm Password
           </FormInput>
+
+          <div className=" mt-6 h-[2px] bg-gray-400" />
+
+          <div className="absolute bottom-16 left-1/2 translate-x-[-50%] text-red-500 font-semibold">
+            {signUpError}
+          </div>
+
           <FormSubmitButton>Sign Up</FormSubmitButton>
         </form>
       </div>
