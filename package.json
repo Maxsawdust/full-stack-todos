@@ -1,0 +1,19 @@
+{
+  "name": "l3t07---express---middleware",
+  "version": "1.0.0",
+  "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"cd BACKEND && npm run dev \" \"cd FRONTEND && npm run dev \"",
+    "install-all": "concurrently \"cd BACKEND && npm isntall \" \"cd FRONTEND && npm install \""
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "dependencies": {
+    "formik": "^2.4.6",
+    "yup": "^1.6.1"
+  }
+}
