@@ -8,12 +8,19 @@ import {
 import { signupSchema } from "../utils/validationSchema";
 import { useNavigate } from "react-router";
 import { useState } from "react";
-import UserSignUp from "../interfaces/userSignUp";
+import DataType from "../interfaces/DataType";
+import { useAppDispatch, useAppSelector } from "../store/hooks/hooks";
+import { setLoading } from "../store/reducers/loadingReducer";
 
 export default function Signup() {
   const [signUpError, setSignUpError] = useState("");
+  // loading state from store
+  const isLoading = useAppSelector((state) => state.loadingReducer).isLoading;
 
   const navigate = useNavigate();
+
+  // getting dispatch
+  const dispatch = useAppDispatch();
 
   const formik = useFormik({
     initialValues: {
@@ -24,28 +31,10 @@ export default function Signup() {
     },
 
     onSubmit: async () => {
+      // initialise Loading state
+      dispatch(setLoading(true));
       try {
-        // get users from DB
-        const allUsers = await (
-          await fetch("http://localhost:5000/users")
-        ).json();
-
-        const username = formik.values.username;
-        const email = formik.values.email.toLowerCase();
-
-        // displaying err message if username taken
-        if (allUsers.find((user: UserSignUp) => user.username === username)) {
-          formik.errors.username = "Oops, that username is already taken!";
-          return;
-        }
-        // displaying err message if email taken
-        if (allUsers.find((user: UserSignUp) => user.email === email)) {
-          formik.errors.email =
-            "Wait a minute, looks like that email is taken!";
-          return;
-        }
-
-        // if there is no existing user with these details, add the user to DB
+        // send a POST request to the DB
         const response = await fetch("http://localhost:5000/users/signup", {
           method: "POST",
           headers: {
@@ -54,8 +43,18 @@ export default function Signup() {
           body: JSON.stringify(formik.values),
         });
 
+        // request gets intercepted by middleware to check if user already exists in DB
+        const data: DataType = await response.json();
+
         if (!response.ok) {
-          throw new Error("Failed to sign up.");
+          // response.status will be 400 if the user has entered an existing username or email
+          if (response.status === 400) {
+            // assign the error message to the corresponding input box
+            formik.errors[data.type] = data.message;
+            return;
+          }
+          // if status is not 400, then it'll be a server err and needs to be thrown
+          throw new Error(data.message);
         }
 
         // clear error text
@@ -65,6 +64,8 @@ export default function Signup() {
       } catch (err: any) {
         setSignUpError("Sorry, something's wrong on our end!");
         console.error(err);
+      } finally {
+        dispatch(setLoading(false));
       }
     },
 
@@ -120,11 +121,13 @@ export default function Signup() {
 
           <div className=" mt-6 h-[2px] bg-gray-400" />
 
-          <div className="absolute bottom-16 left-1/2 translate-x-[-50%] text-red-500 font-semibold">
+          <div className="w-full text-center absolute bottom-16 left-1/2 translate-x-[-50%] text-red-500 font-semibold">
             {signUpError}
           </div>
 
-          <FormSubmitButton>Sign Up</FormSubmitButton>
+          <FormSubmitButton {...(isLoading && { bgColor: "bg-green-500" })}>
+            {isLoading ? "Signing up..." : "Sign Up"}
+          </FormSubmitButton>
         </form>
       </div>
     </div>

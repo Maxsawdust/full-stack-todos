@@ -20,7 +20,8 @@ export default function Login() {
       // check if user exists
 
       // generate token
-      // store details in localStorage
+
+      // store details in localStorages
       const userDetails = {
         email: formik.values.email,
         password: formik.values.password,

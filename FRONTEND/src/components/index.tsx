@@ -1,7 +1,7 @@
 export { default as ImageCard } from "./ImageCard";
 export { default as Button } from "./buttons/Button";
-export { default as Heading } from "./Heading";
-export { default as SubHeading } from "./SubHeading";
+export { default as Heading } from "./headings/Heading";
+export { default as SubHeading } from "./headings/SubHeading";
 export { default as FormInput } from "./FormInput";
 export { default as PasswordVisibilityToggle } from "./PasswordVisibilityToggle";
 export { default as EyeIcon } from "./icons/EyeIcon";
