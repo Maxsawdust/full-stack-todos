@@ -13,7 +13,7 @@ const loadingSlice = createSlice({
   initialState: initialState,
 
   reducers: {
-    setLoading: (state, action: PayloadAction<boolean>) => {
+    setLoading: (state, action) => {
       state.isLoading = action.payload;
     },
   },

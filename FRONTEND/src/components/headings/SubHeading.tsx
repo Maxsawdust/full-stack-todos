@@ -9,7 +9,7 @@ export default function SubHeading({ children, big, small }: SubHeadingProps) {
   return (
     <h2
       className={`${big ? "text-[40px]" : "text-[30px]"} ${
-        small ? "text-[20px]" : ""
+        small ? "text-[10px]" : ""
       } text-gray-800 italic`}>
       {children}
     </h2>

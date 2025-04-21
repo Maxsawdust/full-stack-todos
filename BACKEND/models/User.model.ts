@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { listSchema } from "./List.model";
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -15,6 +16,10 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
+  },
+  lists: {
+    type: [listSchema],
+    default: [],
   },
   createdAt: {
     type: Date,

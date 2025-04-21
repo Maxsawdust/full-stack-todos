@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router";
-import { _Layout, Landing, Login, Signup } from "./pages";
+import { _Layout, Landing, Login, Signup, Dashboard } from "./pages";
 
 function App() {
   return (
@@ -9,6 +9,7 @@ function App() {
           <Route index element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Route>
       </Routes>
     </div>

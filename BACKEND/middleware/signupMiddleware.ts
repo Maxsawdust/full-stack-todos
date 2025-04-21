@@ -1,11 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { User } from "../models/User.model";
-
-interface UserDetails {
-  username: string;
-  email: string;
-  password: string;
-}
+import UserDetails from "../types/UserDetails";
 
 // middleware to check for existing user details before signup
 export default async function signupMiddleware(
@@ -20,14 +15,22 @@ export default async function signupMiddleware(
     // if the username exists then throw an err
     if (await User.findOne({ username: userDetails.username })) {
       res
-        .status(400)
+        .status(401)
         .json({ message: "Username already exists", type: "username" });
       return;
     }
 
     // if the email exists, then throw an err
     if (await User.findOne({ email: userDetails.email.toLowerCase() })) {
-      res.status(400).json({ message: "Email already exists", type: "email" });
+      res.status(401).json({ message: "Email already exists", type: "email" });
+      return;
+    }
+
+    // if the email doesn't end with "@gmail.com" send forbidden
+    if (!userDetails.email.endsWith("@gmail.com")) {
+      res
+        .status(403)
+        .json({ message: "Email must end with @gmail.com", type: "email" });
       return;
     }
 

@@ -47,24 +47,23 @@ export default function Signup() {
         const data: DataType = await response.json();
 
         if (!response.ok) {
-          // response.status will be 400 if the user has entered an existing username or email
-          if (response.status === 400) {
+          if (response.status === 401 || response.status === 403) {
             // assign the error message to the corresponding input box
-            formik.errors[data.type] = data.message;
+            formik.setFieldError(data.type!, data.message);
             return;
           }
           // if status is not 400, then it'll be a server err and needs to be thrown
           throw new Error(data.message);
         }
 
-        // clear error text
-        setSignUpError("");
         // navigate to login
         navigate("/login");
       } catch (err: any) {
         setSignUpError("Sorry, something's wrong on our end!");
         console.error(err);
       } finally {
+        // clear error text
+        setSignUpError("");
         dispatch(setLoading(false));
       }
     },
@@ -121,7 +120,7 @@ export default function Signup() {
 
           <div className=" mt-6 h-[2px] bg-gray-400" />
 
-          <div className="w-full text-center absolute bottom-16 left-1/2 translate-x-[-50%] text-red-500 font-semibold">
+          <div className="w-[200%] text-center absolute bottom-16 left-1/2 translate-x-[-50%] text-red-500 font-semibold">
             {signUpError}
           </div>
 

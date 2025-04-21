@@ -5,12 +5,12 @@
   "main": "index.js",
   "scripts": {
     "dev": "concurrently \"cd BACKEND && npm run dev \" \"cd FRONTEND && npm run dev \"",
-    "install-all": "concurrently \"cd BACKEND && npm isntall \" \"cd FRONTEND && npm install \""
+    "install-all": "concurrently \"npm install\" \"cd BACKEND && npm isntall\" \"cd FRONTEND && npm install\""
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.8",
     "concurrently": "^9.1.2"
-  },
-  "dependencies": {}
+  }
 }

@@ -7,8 +7,13 @@ import {
 
 import { useFormik } from "formik";
 import { loginSchema } from "../utils/validationSchema";
+import { useState } from "react";
+import { useNavigate } from "react-router";
 
 export default function Login() {
+  const [loginError, setLoginError] = useState("");
+  const navigate = useNavigate();
+
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -16,23 +21,30 @@ export default function Login() {
       remember: false,
     },
 
-    onSubmit: () => {
-      // check if user exists
+    onSubmit: async () => {
+      try {
+        // fetch the login route
+        const response = await fetch("http://localhost:5000/users/login", {
+          method: "POST",
+          body: JSON.stringify(formik.values),
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+        });
 
-      // generate token
+        // parse response
+        const data = await response.json();
 
-      // store details in localStorages
-      const userDetails = {
-        email: formik.values.email,
-        password: formik.values.password,
-        token: "",
-      };
+        // if response isn't ok, throw an error to display the message
+        if (!response.ok) {
+          throw new Error(data.message);
+        }
 
-      localStorage.setItem("user", JSON.stringify(userDetails));
-
-      localStorage.setItem("userDetails", JSON.stringify(userDetails));
-
-      // navigate to ToDos
+        navigate("/dashboard");
+      } catch (err: any) {
+        setLoginError(err.message);
+        console.error(err);
+        return;
+      }
     },
 
     validateOnBlur: false,
@@ -50,7 +62,9 @@ export default function Login() {
 
         <div className="h-[2px] bg-gray-400" />
 
-        <form className="flex flex-col gap-4" onSubmit={formik.handleSubmit}>
+        <form
+          className="flex flex-col gap-4 relative"
+          onSubmit={formik.handleSubmit}>
           <FormInput
             name="email"
             onChange={formik.handleChange}
@@ -67,10 +81,18 @@ export default function Login() {
           <div className="h-[2px] mt-6 bg-gray-400" />
 
           <div className="flex items-center gap-2">
-            <input type="checkbox" id="remember" />
+            <input
+              type="checkbox"
+              id="remember"
+              onChange={formik.handleChange}
+            />
             <label htmlFor="remember" className="text-xl text-gray-600">
               Remember me
             </label>
+          </div>
+
+          <div className="w-[200%] text-center absolute bottom-16 left-1/2 translate-x-[-50%] text-red-500 font-semibold">
+            {loginError}
           </div>
 
           <FormSubmitButton>Log In</FormSubmitButton>

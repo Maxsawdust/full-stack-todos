@@ -3,6 +3,8 @@ import cors from "cors";
 import mongoose from "mongoose";
 import userRoutes from "./routes/userRoutes";
 import "dotenv/config";
+import cookieParser from "cookie-parser";
+import listRoutes from "./routes/listRoutes";
 
 const app = express();
 
@@ -23,13 +25,25 @@ if (MONGO_URI) {
 }
 
 // enabling cors
-app.use(cors());
+// using cookies means I need to set the origin and credentials as so
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 // enabling express to parse json data in the request bodies
 app.use(express.json());
 
+// enable cookie parsing
+app.use(cookieParser());
+
 // starting all user routes with "/users"
 app.use("/users", userRoutes);
+
+// starting all list routes with "/lists"
+app.use("/lists", listRoutes);
 
 // enabling the server to listen for requests
 app.listen(PORT, () => {
