@@ -28,7 +28,12 @@ export default function Dashboard() {
 
   const addTodo = () => {
     try {
-      //
+      /*
+        TODO
+       * set some "isBeingWritten" state to true
+       * Display an input, like with the title
+       * POST request to API
+       */
     } catch (err: any) {
       console.error("error", err.message);
     }

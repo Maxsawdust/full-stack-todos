@@ -1,5 +1,10 @@
 import express from "express";
-import { addList, deleteList, getLists } from "../controllers/lists.controller";
+import {
+  addList,
+  addTodo,
+  deleteList,
+  getLists,
+} from "../controllers/lists.controller";
 import JWTMiddleware from "../middleware/JWTMiddleware";
 
 // defining router from express
@@ -11,5 +16,7 @@ router.get("/", JWTMiddleware, getLists);
 router.patch("/", JWTMiddleware, addList);
 
 router.delete("/:id", JWTMiddleware, deleteList);
+
+router.post("/:id", JWTMiddleware, addTodo);
 
 export default router;

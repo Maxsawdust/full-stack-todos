@@ -3,6 +3,7 @@ import "dotenv/config";
 import { List } from "../models/List.model";
 import { User } from "../models/User.model";
 import { getUserByiD } from "./users.controller";
+import TodoType from "../types/TodoType";
 
 export const getLists = async (req: Request, res: Response) => {
   try {
@@ -16,7 +17,9 @@ export const getLists = async (req: Request, res: Response) => {
     console.log(req.user);
 
     // if there is a user, then the lists can be accessed like so:
-    const user = await getUserByiD(req, res);
+    // this is a function that uses findById to get a user
+    // relies on JWT auth
+    const user = await getUserByiD(req);
 
     const lists = user.lists;
 
@@ -30,7 +33,7 @@ export const getLists = async (req: Request, res: Response) => {
 export const addList = async (req: Request, res: Response) => {
   try {
     // Find the user in the database
-    const user = await getUserByiD(req, res);
+    const user = await getUserByiD(req);
 
     // create a new list from body
     const newlist = new List({ ...req.body });
@@ -56,7 +59,7 @@ export const deleteList = async (req: Request, res: Response) => {
       return;
     }
 
-    const user = await getUserByiD(req, res);
+    const user = await getUserByiD(req);
 
     // Use pull to remove the list from the array
     user.lists.pull({ _id: listId });
@@ -64,6 +67,21 @@ export const deleteList = async (req: Request, res: Response) => {
     await user.save();
 
     res.json({ message: "list deleted" });
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const addTodo = async (req: Request, res: Response) => {
+  try {
+    const user = await getUserByiD(req);
+    /*
+     * Get list from params
+     * push todo to list
+     * save user
+     */
+
+    const newTodo: TodoType = { ...req.body, completed: false };
   } catch (err: any) {
     res.status(500).json({ message: err.message });
   }

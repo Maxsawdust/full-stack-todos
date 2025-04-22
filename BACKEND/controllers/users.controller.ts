@@ -90,7 +90,7 @@ export const logoutUser = (req: Request, res: Response) => {
   }
 };
 
-export const getUserByiD = async (req: Request, res: Response) => {
+export const getUserByiD = async (req: Request) => {
   // getting array of users from DB
   const user = await User.findById(req.user._id);
 
