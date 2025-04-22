@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "concurrently \"cd BACKEND && npm run dev \" \"cd FRONTEND && npm run dev \"",
-    "install-all": "concurrently \"npm install\" \"cd BACKEND && npm isntall\" \"cd FRONTEND && npm install\""
+    "install-all": "\"cd BACKEND && npm isntall\" \"cd FRONTEND && npm install\""
   },
   "author": "",
   "license": "ISC",

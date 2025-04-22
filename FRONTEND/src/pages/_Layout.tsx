@@ -1,11 +1,10 @@
 import { useEffect } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router";
+import { Outlet, useLocation } from "react-router";
 import { NavBar } from "../components";
 import { useAppDispatch } from "../store/hooks/hooks";
 import { setLists } from "../store/reducers/listReducer";
 
 export default function _Layout() {
-  const navigate = useNavigate();
   const location = useLocation();
 
   const dispatch = useAppDispatch();
@@ -17,7 +16,7 @@ export default function _Layout() {
 
   return (
     <>
-      {location.pathname === "/dashboard" && <NavBar />}
+      {location.pathname.includes("/dashboard") && <NavBar />}
       <Outlet />
     </>
   );

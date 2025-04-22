@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import "dotenv/config";
 import { List } from "../models/List.model";
 import { User } from "../models/User.model";
+import { getUserByiD } from "./users.controller";
 
 export const getLists = async (req: Request, res: Response) => {
   try {
@@ -15,11 +16,8 @@ export const getLists = async (req: Request, res: Response) => {
     console.log(req.user);
 
     // if there is a user, then the lists can be accessed like so:
-    const user = await User.findById(req.user._id);
-    if (!user) {
-      res.status(404).json({ message: "User not found" });
-      return;
-    }
+    const user = await getUserByiD(req, res);
+
     const lists = user.lists;
 
     // send the lists
@@ -32,11 +30,7 @@ export const getLists = async (req: Request, res: Response) => {
 export const addList = async (req: Request, res: Response) => {
   try {
     // Find the user in the database
-    const user = await User.findById(req.user._id);
-    if (!user) {
-      res.status(404).json({ message: "User not found" });
-      return;
-    }
+    const user = await getUserByiD(req, res);
 
     // create a new list from body
     const newlist = new List({ ...req.body });
@@ -49,6 +43,27 @@ export const addList = async (req: Request, res: Response) => {
 
     // Return the updated lists array
     res.status(201).json(user.lists);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const deleteList = async (req: Request, res: Response) => {
+  try {
+    const listId = req.params.id;
+    if (!listId) {
+      res.status(404).json({ message: "list not found" });
+      return;
+    }
+
+    const user = await getUserByiD(req, res);
+
+    // Use pull to remove the list from the array
+    user.lists.pull({ _id: listId });
+
+    await user.save();
+
+    res.json({ message: "list deleted" });
   } catch (err: any) {
     res.status(500).json({ message: err.message });
   }

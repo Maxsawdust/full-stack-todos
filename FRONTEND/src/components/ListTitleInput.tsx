@@ -14,7 +14,7 @@ export default function ListTitleInput() {
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value.length < 25) setInputValue(e.target.value);
+    if (e.target.value.length < 12) setInputValue(e.target.value);
     return;
   };
 

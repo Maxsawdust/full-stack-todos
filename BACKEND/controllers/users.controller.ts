@@ -80,12 +80,23 @@ export const loginUser = async (req: Request, res: Response) => {
   }
 };
 
-export const getUsers = async (req: Request, res: Response) => {
+export const logoutUser = (req: Request, res: Response) => {
   try {
-    // getting array of users from DB
-    const users = await User.find();
-    res.send(users);
-  } catch (err: any) {
-    res.status(500).send(err.message);
+    //clear the token cookie to effectively log them out
+    res.clearCookie("token");
+    res.json({ message: "logged out successfully" });
+  } catch (err) {
+    res.status(500).json({ err });
   }
+};
+
+export const getUserByiD = async (req: Request, res: Response) => {
+  // getting array of users from DB
+  const user = await User.findById(req.user._id);
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  return user;
 };
