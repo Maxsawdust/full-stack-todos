@@ -1,7 +1,7 @@
-import { ContentType } from "../interfaces/ListType";
+import TodoType from "../interfaces/TodoType";
 
 interface TodoCardProps {
-  todo: ContentType;
+  todo: TodoType;
 }
 
 export default function TodoCard({ todo }: TodoCardProps) {

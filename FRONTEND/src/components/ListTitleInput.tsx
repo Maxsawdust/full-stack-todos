@@ -21,7 +21,7 @@ export default function ListTitleInput() {
   // function to handle when enter is pressed
   const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      // adding the new list to global store
+      // creating a new list with user inputted title
       const newList: ListType = {
         title: inputValue,
         content: [],

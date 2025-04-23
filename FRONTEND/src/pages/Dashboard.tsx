@@ -1,12 +1,26 @@
 import { useNavigate, useParams } from "react-router";
-import { useAppSelector } from "../store/hooks/hooks";
-import { Button, Heading, NoLists, SubHeading, TodoCard } from "../components";
+import { useAppDispatch, useAppSelector } from "../store/hooks/hooks";
 import { useEffect } from "react";
+import { setTodoBeingAdded } from "../store/reducers/listReducer";
+
+import {
+  Button,
+  Heading,
+  NoLists,
+  SubHeading,
+  TodoCard,
+  TodoInput,
+} from "../components";
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const lists = useAppSelector((state) => state.listReducer.lists);
   const { _id } = useParams();
+  const dispatch = useAppDispatch();
+
+  const todoBeingAdded = useAppSelector(
+    (state) => state.listReducer.todoBeingAdded
+  );
 
   useEffect(() => {
     // if there are lists
@@ -27,41 +41,43 @@ export default function Dashboard() {
   }
 
   const addTodo = () => {
-    try {
-      /*
-        TODO
-       * set some "isBeingWritten" state to true
-       * Display an input, like with the title
-       * POST request to API
-       */
-    } catch (err: any) {
-      console.error("error", err.message);
-    }
+    // display the TodoInput component
+    dispatch(setTodoBeingAdded(true));
   };
 
-  const list = lists.find((list) => list._id === _id)!;
+  const list = lists.find((list) => list._id === _id);
+
+  if (!list) {
+    return <NoLists />; // or a loading state
+  }
 
   return (
     <div className="flex-1 flex flex-col justify-center items-center">
       <div className="flex-1 w-4/5 py-20 flex flex-col gap-30">
         <Heading big>{list.title}</Heading>
 
-        <div className=" w-full min-h-4/5 flex flex-col items-center bg-[#d4d4d4] rounded-xl">
+        <div className=" w-full min-h-4/5  flex flex-col items-center bg-[#d4d4d4] rounded-xl">
           <div className="top-0 w-full h-1/5 px-10 flex items-center rounded-t-xl bg-[#c4c4c4]">
             <Button onClick={addTodo}>Add Todo</Button>
           </div>
 
-          <div className="w-full h-full flex flex-col justify-center items-center">
-            {list.content.length > 0 ? (
+          <div className="w-full h-full p-8 flex flex-col ">
+            {/* if there is list content then map through the todos and display them */}
+            {list.content.length > 0 &&
               list.content.map((todo) => {
                 return <TodoCard todo={todo} />;
-              })
-            ) : (
+              })}
+
+            {/* if there's no list content and a todo is not being added, display this */}
+            {list.content.length === 0 && !todoBeingAdded && (
               <div>
                 <Heading>No Todos!</Heading>
                 <SubHeading>Press "Add Todo" to add a todo</SubHeading>
               </div>
             )}
+
+            {/* if a todo is being added, show the input for it */}
+            {todoBeingAdded && <TodoInput listId={list._id!} />}
           </div>
         </div>
       </div>

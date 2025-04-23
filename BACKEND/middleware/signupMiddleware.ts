@@ -26,14 +26,6 @@ export default async function signupMiddleware(
       return;
     }
 
-    // if the email doesn't end with "@gmail.com" send forbidden
-    if (!userDetails.email.endsWith("@gmail.com")) {
-      res
-        .status(403)
-        .json({ message: "Email must end with @gmail.com", type: "email" });
-      return;
-    }
-
     next();
   } catch (err: any) {
     res.status(500).send(err.message);

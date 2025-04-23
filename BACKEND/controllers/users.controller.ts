@@ -100,3 +100,12 @@ export const getUserByiD = async (req: Request) => {
 
   return user;
 };
+
+export const getUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+};

@@ -4,6 +4,7 @@ import { List } from "../models/List.model";
 import { User } from "../models/User.model";
 import { getUserByiD } from "./users.controller";
 import TodoType from "../types/TodoType";
+import { Todo } from "../models/Todo.model";
 
 export const getLists = async (req: Request, res: Response) => {
   try {
@@ -74,14 +75,32 @@ export const deleteList = async (req: Request, res: Response) => {
 
 export const addTodo = async (req: Request, res: Response) => {
   try {
+    // get user from external function
     const user = await getUserByiD(req);
-    /*
-     * Get list from params
-     * push todo to list
-     * save user
-     */
+    // get list from params
+    const listId = req.params.id;
+    if (!listId) {
+      res.status(404).json({ message: "list not found" });
+      return;
+    }
 
-    const newTodo: TodoType = { ...req.body, completed: false };
+    // Find the specific list using mongoose's id() method
+    const list = user.lists.id(listId);
+    if (!list) {
+      res.status(404).json({ message: "list not found" });
+      return;
+    }
+
+    // creating a new Todo model
+    const newTodo = new Todo({ ...req.body });
+
+    // pushing the todo to the user's lists.content array
+    list.content.push(newTodo);
+
+    // saving the changes to the user
+    await user.save();
+
+    res.status(201).json(list);
   } catch (err: any) {
     res.status(500).json({ message: err.message });
   }

@@ -1,15 +1,5 @@
 import mongoose from "mongoose";
-
-const todoSchema = new mongoose.Schema({
-  message: {
-    type: String,
-    required: true,
-  },
-  completed: {
-    type: Boolean,
-    default: false,
-  },
-});
+import { todoSchema } from "./Todo.model";
 
 export const listSchema = new mongoose.Schema({
   title: {

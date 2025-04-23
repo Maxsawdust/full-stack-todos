@@ -12,3 +12,4 @@ export { default as NavListButton } from "./buttons/NavListButton";
 export { default as ListTitleInput } from "./ListTitleInput";
 export { default as NoLists } from "./NoLists";
 export { default as TodoCard } from "./TodoCard";
+export { default as TodoInput } from "./TodoInput";
