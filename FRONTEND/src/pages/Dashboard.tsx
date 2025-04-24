@@ -1,8 +1,11 @@
 import { useNavigate, useParams } from "react-router";
 import { useAppDispatch, useAppSelector } from "../store/hooks/hooks";
-import { useEffect } from "react";
-import { setTodoBeingAdded } from "../store/reducers/listReducer";
-
+import { useEffect, useState } from "react";
+import {
+  setListBeingEdited,
+  setTodoBeingAdded,
+} from "../store/reducers/listReducer";
+import { DashboardLoading } from "./";
 import {
   Button,
   Heading,
@@ -13,6 +16,7 @@ import {
 } from "../components";
 
 export default function Dashboard() {
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const lists = useAppSelector((state) => state.listReducer.lists);
   const { _id } = useParams();
@@ -28,11 +32,19 @@ export default function Dashboard() {
       //  and there's no _id from params
       // OR the lists array no longer contains the _id in params
       if (!_id || !lists.some((list) => list._id === _id)) {
+        // global store needs to be updated to reflect _id of zero indexed list
+        dispatch(setListBeingEdited(lists[0]._id));
         // user needs to be navigated to the first list in the lists array
         navigate(`/dashboard/${lists[0]._id}`);
         console.log("navigating");
       }
+      // if there is an _id from params, that's the list being edited
+      if (_id) {
+        dispatch(setListBeingEdited(_id));
+      }
     }
+
+    setIsLoading(false);
   }, [lists]);
 
   //if there's no lists, display the no lists page
@@ -46,6 +58,10 @@ export default function Dashboard() {
   };
 
   const list = lists.find((list) => list._id === _id);
+
+  if (isLoading) {
+    return <DashboardLoading />;
+  }
 
   if (!list) {
     return <NoLists />; // or a loading state
@@ -61,7 +77,7 @@ export default function Dashboard() {
             <Button onClick={addTodo}>Add Todo</Button>
           </div>
 
-          <div className="w-full h-full p-8 flex flex-col ">
+          <div className="w-full h-full p-8 flex flex-col gap-4">
             {/* if there is list content then map through the todos and display them */}
             {list.content.length > 0 &&
               list.content.map((todo) => {

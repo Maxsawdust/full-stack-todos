@@ -6,6 +6,8 @@ import {
   getLists,
 } from "../controllers/lists.controller";
 import JWTMiddleware from "../middleware/JWTMiddleware";
+import todoLengthMiddleware from "../middleware/todoLengthMiddleware";
+import contentTypeMiddleware from "../middleware/contentTypeMiddleware";
 
 // defining router from express
 const router = express.Router();
@@ -20,6 +22,12 @@ router.patch("/", JWTMiddleware, addList);
 router.delete("/:id", JWTMiddleware, deleteList);
 
 // PATCH route to add a todo item
-router.patch("/:id", JWTMiddleware, addTodo);
+router.patch(
+  "/:id",
+  JWTMiddleware,
+  todoLengthMiddleware,
+  contentTypeMiddleware,
+  addTodo
+);
 
 export default router;

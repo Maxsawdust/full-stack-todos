@@ -9,6 +9,7 @@ interface TodoInputTypes {
 
 export default function TodoInput({ listId }: TodoInputTypes) {
   const [inputValue, setInputValue] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   // ref to grab input element
   const inputRef = useRef<HTMLInputElement>(null);
@@ -47,8 +48,18 @@ export default function TodoInput({ listId }: TodoInputTypes) {
 
         // throw an err if response is bad
         if (!response.ok) {
-          throw new Error("Failed to add todo");
+          const errMessage = (await response.json()).message;
+          // check if response is 403, forbidden
+          if (response.status === 403) {
+            // show an error message on screen
+            setErrorMessage(errMessage);
+          }
+
+          throw new Error(errMessage);
         }
+
+        // clear error message
+        setErrorMessage("");
 
         // get the new list from response
         const updatedList = await response.json();
@@ -70,14 +81,21 @@ export default function TodoInput({ listId }: TodoInputTypes) {
   };
 
   return (
-    <input
-      type="text"
-      className="w-2/3 px-2 py-1 self-start rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-700"
-      value={inputValue}
-      onChange={handleChange}
-      onKeyDown={handleKeyDown}
-      onBlur={hideInput}
-      ref={inputRef}
-    />
+    <div>
+      <input
+        type="text"
+        className={`w-2/3 px-2 py-1 self-start rounded-md bg-gray-100 focus:outline-none focus:ring-2 ${
+          errorMessage ? "focus:ring-red-700" : "focus:ring-gray-700"
+        }`}
+        value={inputValue}
+        onChange={handleChange}
+        onKeyDown={handleKeyDown}
+        onBlur={hideInput}
+        ref={inputRef}
+        placeholder="Write down a task you need to complete"
+      />
+
+      {errorMessage && <p className="text-red-700">{errorMessage}</p>}
+    </div>
   );
 }

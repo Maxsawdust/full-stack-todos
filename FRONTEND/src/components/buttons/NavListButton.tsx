@@ -3,7 +3,7 @@ import { TiDelete } from "react-icons/ti";
 import ListType from "../../interfaces/ListType";
 import { useLocation, useNavigate } from "react-router";
 import { useAppDispatch, useAppSelector } from "../../store/hooks/hooks";
-import { setLists } from "../../store/reducers/listReducer";
+import { setListBeingEdited, setLists } from "../../store/reducers/listReducer";
 
 interface NavListButtonProps {
   list: ListType;
@@ -17,6 +17,8 @@ export default function NavListButton({ list }: NavListButtonProps) {
   const lists = useAppSelector((state) => state.listReducer.lists);
 
   const displayList = () => {
+    // update global store to reflect the selected list's _id
+    dispatch(setListBeingEdited(list._id));
     navigate(`/dashboard/${list._id}`);
   };
 
