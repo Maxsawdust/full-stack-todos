@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import ListType from "../../interfaces/ListType";
 import TodoType from "../../interfaces/TodoType";
+import { useAppSelector } from "../hooks/hooks";
 
 interface ListReducerType {
   lists: ListType[];
@@ -9,7 +10,35 @@ interface ListReducerType {
   todos: TodoType[];
   todoBeingAdded: boolean;
   todoBeingEdited: string | null;
+  todoBeingCompleted: string | null;
 }
+
+const findTodo = (
+  lists: ListType[],
+  listId: string | null,
+  todoId: string | null
+) => {
+  if (!listId) {
+    throw new Error("missing listId");
+  }
+
+  if (!todoId) {
+    throw new Error("missing todoId");
+  }
+
+  // find the index in lists array of the list being edited
+  const currentListIndex = lists.findIndex((list) => list._id === listId);
+
+  // find the index of the todo task in the list being edited
+  const currentTodoIndex = lists[currentListIndex].content.findIndex(
+    (t) => t._id === todoId
+  );
+
+  const list = lists[currentListIndex];
+  const todo = list.content[currentTodoIndex];
+
+  return { list, todo };
+};
 
 const initialState: ListReducerType = {
   lists: [],
@@ -18,6 +47,7 @@ const initialState: ListReducerType = {
   todos: [],
   todoBeingAdded: false,
   todoBeingEdited: null,
+  todoBeingCompleted: null,
 };
 
 const listSlice = createSlice({
@@ -57,22 +87,39 @@ const listSlice = createSlice({
       state.todoBeingEdited = action.payload;
     },
 
+    setTodoBeingCompleted: (state, action) => {
+      state.todoBeingCompleted = action.payload;
+    },
+
     updateTodo: (state, action) => {
-      const lists = state.lists;
       const listId = state.listBeingEdited;
-      const todoId = state.todoBeingEdited;
+      const todoId = state.todoBeingEdited || state.todoBeingCompleted;
 
-      // find the index in lists array of the list being edited
-      const currentListIndex = lists.findIndex((list) => list._id === listId);
+      try {
+        // get todo from function
+        const { todo } = findTodo(state.lists, listId, todoId);
 
-      // find the index of the todo task in the list being edited
-      const currentTodoIndex = lists[currentListIndex].content.findIndex(
-        (t) => t._id === todoId
-      );
+        // update the todo to reflect the payload
+        Object.assign(todo, action.payload);
+      } catch (err: any) {
+        console.error(err.message);
+      }
+    },
 
-      const list = lists[currentListIndex];
-      // update the "message" in the list being edited
-      list.content[currentTodoIndex].message = action.payload;
+    deleteTodo: (state, action) => {
+      // get the list that is being displayed
+      const listId = state.listBeingEdited;
+      // get the todoId from payload
+      const todoId = action.payload;
+
+      try {
+        // get todo and list from function
+        const { todo, list } = findTodo(state.lists, listId, todoId);
+        // remove it from store
+        list.content.splice(list.content.indexOf(todo), 1);
+      } catch (err) {
+        console.error(err);
+      }
     },
   },
 });
@@ -84,6 +131,8 @@ export const {
   setTodoBeingAdded,
   setTodos,
   setTodoBeingEdited,
+  setTodoBeingCompleted,
   updateTodo,
+  deleteTodo,
 } = listSlice.actions;
 export default listSlice.reducer;

@@ -9,10 +9,6 @@
   DONE?
    -->
 
-# TodoCard.tsx
+# login ?
 
-- design TodoCard
-  - implement edit functionality
-    - make PATCH route to edit a specific todo **\***
-  - implement "completion"
-  - implement deletion
+- implement refresh of JWT to maintain active login sesssion

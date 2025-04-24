@@ -111,15 +111,15 @@ export const editTodo = async (req: Request, res: Response) => {
     // get user
     const user = await getUserByiD(req);
 
-    const taskId = req.params.id;
-    if (!taskId) {
+    const todoId = req.params.id;
+    if (!todoId) {
       res.status(404).json({ message: "todo task not found" });
       return;
     }
 
     // Find the list containing the todo
     const list = user.lists.find((list) =>
-      list.content.some((todo) => todo._id.toString() === taskId)
+      list.content.some((todo) => todo._id.toString() === todoId)
     );
 
     if (!list) {
@@ -128,7 +128,7 @@ export const editTodo = async (req: Request, res: Response) => {
     }
 
     // Find the specific todo in the list
-    const todo = list.content.find((todo) => todo._id.toString() === taskId);
+    const todo = list.content.find((todo) => todo._id.toString() === todoId);
 
     if (!todo) {
       res.status(404).json({ message: "todo task not found" });
@@ -144,6 +144,42 @@ export const editTodo = async (req: Request, res: Response) => {
     await user.save();
 
     res.status(201).json(todo);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const deleteTodo = async (req: Request, res: Response) => {
+  try {
+    // get the user (this validates token)
+    const user = await getUserByiD(req);
+    const todoId = req.params.id;
+
+    // return not found if can't find
+    if (!todoId) {
+      res.status(404).json({ message: "cannot find todo" });
+      return;
+    }
+
+    // Find the list containing the todo
+    const list = user.lists.find((list) =>
+      list.content.some((todo) => todo._id.toString() === todoId)
+    );
+
+    if (!list) {
+      res.status(404).json({ message: "todo task not found" });
+      return;
+    }
+
+    // Remove the todo from the list's content array
+    list.content.pull({ _id: todoId });
+
+    // Save the changes to the user document
+    await user.save();
+
+    res.json({
+      message: `todo of id ${todoId} deleted from user of id ${user._id}`,
+    });
   } catch (err: any) {
     res.status(500).json({ message: err.message });
   }

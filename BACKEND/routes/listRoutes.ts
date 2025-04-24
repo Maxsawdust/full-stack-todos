@@ -3,6 +3,7 @@ import {
   addList,
   addTodo,
   deleteList,
+  deleteTodo,
   editTodo,
   getLists,
 } from "../controllers/lists.controller";
@@ -39,5 +40,8 @@ router.patch(
   contentTypeMiddleware,
   editTodo
 );
+
+// DELETE route to remove a todo
+router.delete("/deleteTodo/:id", JWTMiddleware, deleteTodo);
 
 export default router;
