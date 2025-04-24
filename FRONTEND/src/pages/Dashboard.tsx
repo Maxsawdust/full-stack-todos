@@ -81,7 +81,7 @@ export default function Dashboard() {
             {/* if there is list content then map through the todos and display them */}
             {list.content.length > 0 &&
               list.content.map((todo) => {
-                return <TodoCard todo={todo} />;
+                return <TodoCard todo={todo} key={todo._id} />;
               })}
 
             {/* if there's no list content and a todo is not being added, display this */}

@@ -105,3 +105,46 @@ export const addTodo = async (req: Request, res: Response) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+export const editTodo = async (req: Request, res: Response) => {
+  try {
+    // get user
+    const user = await getUserByiD(req);
+
+    const taskId = req.params.id;
+    if (!taskId) {
+      res.status(404).json({ message: "todo task not found" });
+      return;
+    }
+
+    // Find the list containing the todo
+    const list = user.lists.find((list) =>
+      list.content.some((todo) => todo._id.toString() === taskId)
+    );
+
+    if (!list) {
+      res.status(404).json({ message: "todo task not found" });
+      return;
+    }
+
+    // Find the specific todo in the list
+    const todo = list.content.find((todo) => todo._id.toString() === taskId);
+
+    if (!todo) {
+      res.status(404).json({ message: "todo task not found" });
+      return;
+    }
+
+    // Update the todo with the new data
+    // Object.assign is used here because the body could contain either a message,
+    // or "completed" value
+    Object.assign(todo, req.body);
+
+    // Save the changes
+    await user.save();
+
+    res.status(201).json(todo);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+};

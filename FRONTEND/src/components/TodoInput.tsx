@@ -37,14 +37,17 @@ export default function TodoInput({ listId }: TodoInputTypes) {
         };
 
         // send a PATCH request to api
-        const response = await fetch(`http://localhost:5000/lists/${listId}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(newTodo),
-        });
+        const response = await fetch(
+          `http://localhost:5000/lists/addTodo/${listId}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify(newTodo),
+          }
+        );
 
         // throw an err if response is bad
         if (!response.ok) {

@@ -3,6 +3,7 @@ import {
   addList,
   addTodo,
   deleteList,
+  editTodo,
   getLists,
 } from "../controllers/lists.controller";
 import JWTMiddleware from "../middleware/JWTMiddleware";
@@ -23,11 +24,20 @@ router.delete("/:id", JWTMiddleware, deleteList);
 
 // PATCH route to add a todo item
 router.patch(
-  "/:id",
+  "/addTodo/:id",
   JWTMiddleware,
   todoLengthMiddleware,
   contentTypeMiddleware,
   addTodo
+);
+
+// PATH route to edit a todo item
+router.patch(
+  "/editTodo/:id",
+  JWTMiddleware,
+  todoLengthMiddleware,
+  contentTypeMiddleware,
+  editTodo
 );
 
 export default router;

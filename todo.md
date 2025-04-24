@@ -1,10 +1,4 @@
-# middleware
-
-- taskLengthMiddleware.ts
-
-  - return 403 if body is too long
-  - include error message to be displayed
-    in TodoInput
+<!-- # middleware
 
 - contentTypeMiddleware.ts
   - verify content-type header is
@@ -12,9 +6,13 @@
   - return 403 if it's not
   - handle case if content-type is missing.
 
+  DONE?
+   -->
+
 # TodoCard.tsx
 
 - design TodoCard
-  - implement "completion"
   - implement edit functionality
+    - make PATCH route to edit a specific todo **\***
+  - implement "completion"
   - implement deletion
