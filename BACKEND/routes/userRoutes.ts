@@ -11,6 +11,7 @@ import gmailMiddleware from "../middleware/gmailMiddleware";
 const router = express.Router();
 
 // GET route to get all users
+// This route isn't use in the application, and was just for testing purposes!
 router.get("/", getUsers);
 
 // POST route to create a user, uses middleware to check if user exists already

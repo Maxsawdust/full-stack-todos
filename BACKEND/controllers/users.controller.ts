@@ -101,6 +101,7 @@ export const getUserByiD = async (req: Request) => {
   return user;
 };
 
+// This route is only used for testing purposes
 export const getUsers = async (req: Request, res: Response) => {
   try {
     const users = await User.find();

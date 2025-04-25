@@ -18,7 +18,7 @@ const router = express.Router();
 router.get("/", JWTMiddleware, getLists);
 
 // PATH route to add a list
-router.patch("/", JWTMiddleware, addList);
+router.patch("/", JWTMiddleware, contentTypeMiddleware, addList);
 
 // DELETE route to delete a list
 router.delete("/:id", JWTMiddleware, deleteList);

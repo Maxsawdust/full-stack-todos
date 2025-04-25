@@ -1,54 +1,49 @@
-# React + TypeScript + Vite
+# Full Stack Todo List App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project was made to showcase my understanding of middleware in express, as well as JWTs and backend integration with react!
 
-Currently, two official plugins are available:
+## Getting started
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+To start, make sure you're in the route directory, and run
 
-## Expanding the ESLint configuration
+```bash
+npm install
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+npm run install-all
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+These commands will install all dependencies project-wide, and then run both the frontend and backend server.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Task requirements
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+- The user is able to securely register and log in
+
+  - This is done by using JWTs and password encrypting with bcrypt.
+  - The user is able to click "remember me" in order to extend the expiration of their token
+
+- The user is able to add/edit/remove/read tasks
+
+  - I decided to also implement individual list pages, so the user can seperate tasks into categories if they wish
+    (This was inspired by Notion.io)
+
+- I've implemented middleware to:
+
+  - Forbid all request from users who's emails do not end wil the substring @gmail.com
+  - Reject the addition of tasks that exceed 140 characters
+  - Reject any requests that are not of JSON content-type
+
+- The user can only do any of this if they are logged in
+
+- The app connects to a MongoDB cluster
+
+## Additional bits
+
+- I decided to use tailwindCSS to aide my styling of the webapp
+
+## Improvements
+
+- When researching, I heard about refresh tokens, which I think would be a great addition to this page in order to prevent a user's session expiring after 1h
+
+- As I was developing this, I started debating whether it's best to update the global store and the DB seperately, or both at the same time. As a result, there are some functions that rely on a database fetch to update the store, and some that do it indepentantly. This could obviously be a bit messy

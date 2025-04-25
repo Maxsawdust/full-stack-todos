@@ -1,9 +1,7 @@
 import { Request, Response } from "express";
 import "dotenv/config";
 import { List } from "../models/List.model";
-import { User } from "../models/User.model";
 import { getUserByiD } from "./users.controller";
-import TodoType from "../types/TodoType";
 import { Todo } from "../models/Todo.model";
 
 export const getLists = async (req: Request, res: Response) => {
